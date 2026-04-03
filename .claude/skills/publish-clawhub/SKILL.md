@@ -30,6 +30,10 @@ If not logged in, prompt the user to run `! clawhub login`.
 
 Edit `skills/chenyu-aigc/SKILL.md`, update the `version:` field in YAML frontmatter to the new version.
 
+### 3.5. Pre-publish check: declared binaries
+
+Scan all `.md` files in `skills/chenyu-aigc/` for CLI tools used in code blocks (e.g. `curl`, `jq`, `uuidgen`, `base64`, `tr`). Verify every tool found is listed in `SKILL.md` frontmatter under `metadata.openclaw.requires.bins`. If any are missing, add them before publishing — otherwise OpenClaw will flag the skill as "Suspicious" due to undeclared binary dependencies.
+
 ### 4. Confirm with user
 
 Show: skill slug (`chenyu-aigc`), new version, and files in `skills/chenyu-aigc/`. Ask the user for a changelog message or generate one from recent changes.

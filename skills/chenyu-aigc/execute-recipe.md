@@ -34,6 +34,36 @@ Each input has a `type` field and a corresponding payload field:
 
 **URI formats:** HTTPS URLs, data URIs (`data:image/jpeg;base64,...`), or S3 Asset IDs (26-char ULID).
 
+### Local image files — use file-backed JSON payload
+
+When a local image needs to be sent as a data URI:
+
+- **Do NOT** inline large base64 strings directly in `curl -d '...'` shell arguments — this will fail due to OS/shell argument length limits before the request even reaches the API.
+- **Do** write the full JSON body to a temporary file, then submit with `curl --data @payload.json`.
+
+```bash
+# 1. Build payload with base64 data URI and write to file
+BASE64=$(base64 < /path/to/image.jpg | tr -d '\n')
+cat > /tmp/payload.json <<EOF
+{
+  "inputs": [
+    {"type": "text", "text": {"prompt": "Camera slowly zooms in"}},
+    {"type": "image", "image": {"uri": "data:image/jpeg;base64,$BASE64", "role": "first_frame"}}
+  ],
+  "parameters": {"duration": 5}
+}
+EOF
+
+# 2. Submit using @file reference
+curl -s -X POST "$CHENYU_BASE_URL/api/v1/aigc/recipes/{recipe_id}/execute" \
+  -H "Authorization: Bearer $CHENYU_API_KEY" \
+  -H "Idempotency-Key: $(uuidgen)" \
+  -H "Content-Type: application/json" \
+  --data @/tmp/payload.json
+```
+
+The server accepts data URIs and internally converts them to asset IDs. This is the **preferred path** when no public URL is available — no need to use the upload API first.
+
 ## Response
 
 ```json

@@ -5,7 +5,7 @@ description: >
   Supports text-to-video, image-to-video, video extension, style transfer, and AI image generation.
   Trigger when: generate video, create AI video, text to video, image to video,
   AI image generation, video generation, 生成视频, AI视频, 文生视频, 图生视频, 生成图片.
-version: 1.0.1
+version: 1.0.4
 metadata:
   openclaw:
     requires:
@@ -14,6 +14,9 @@ metadata:
         - CHENYU_BASE_URL
       bins:
         - curl
+        - jq
+        - uuidgen
+        - base64
     primaryEnv: CHENYU_API_KEY
     emoji: "\U0001F3AC"
     os:
